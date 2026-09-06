@@ -1,0 +1,23 @@
+Dataset size: 5572 messages ({'ham': 4825, 'spam': 747})
+Train/Test split: 4457 / 1115
+TF-IDF vocabulary size: 3000
+
+Multinomial Naive Bayes:
+  Accuracy:  0.9722
+  Precision: 1.0000
+  Recall:    0.7919
+  F1 Score:  0.8839
+
+Logistic Regression:
+  Accuracy:  0.9695
+  Precision: 1.0000
+  Recall:    0.7718
+  F1 Score:  0.8712
+
+Linear SVM:
+  Accuracy:  0.9839
+  Precision: 0.9781
+  Recall:    0.8993
+  F1 Score:  0.9371
+
+Best model: Linear SVM
