@@ -212,8 +212,13 @@ plt.savefig(f"{SS}/07_sample_predictions.png", dpi=150, bbox_inches="tight")
 plt.close()
 
 # ---------------------------------------------------------------------------
-# 12. SAVE SUMMARY METRICS TO TEXT
+# 12. SAVE MODEL, VECTORIZER, AND SUMMARY METRICS TO TEXT
 # ---------------------------------------------------------------------------
+import joblib
+joblib.dump(tfidf, "tfidf_vectorizer.joblib")
+joblib.dump(best["model"], "spam_classifier_model.joblib")
+print("\nSaved TF-IDF vectorizer and best model to disk.")
+
 with open("results_summary.txt", "w") as f:
     f.write(f"Dataset size: {df.shape[0]} messages ({df['label'].value_counts().to_dict()})\n")
     f.write(f"Train/Test split: {len(X_train)} / {len(X_test)}\n")

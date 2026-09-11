@@ -3,21 +3,21 @@ Train/Test split: 4457 / 1115
 TF-IDF vocabulary size: 3000
 
 Multinomial Naive Bayes:
-  Accuracy:  0.9722
+  Accuracy:  0.9731
   Precision: 1.0000
-  Recall:    0.7919
-  F1 Score:  0.8839
+  Recall:    0.7987
+  F1 Score:  0.8881
 
 Logistic Regression:
-  Accuracy:  0.9695
+  Accuracy:  0.9677
   Precision: 1.0000
-  Recall:    0.7718
-  F1 Score:  0.8712
+  Recall:    0.7584
+  F1 Score:  0.8626
 
 Linear SVM:
   Accuracy:  0.9839
-  Precision: 0.9781
-  Recall:    0.8993
-  F1 Score:  0.9371
+  Precision: 0.9712
+  Recall:    0.9060
+  F1 Score:  0.9375
 
 Best model: Linear SVM

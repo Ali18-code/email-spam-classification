@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+sms_spam.tsv
+.DS_Store
