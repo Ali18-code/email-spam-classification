@@ -4,14 +4,14 @@ Dataset: SMS Spam Collection (labelled ham/spam dataset, same one distributed on
 as "SMS Spam Collection Dataset")
 """
 import os
-import re
-import string
 import pandas as pd
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+from text_utils import clean_text
 
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -48,14 +48,6 @@ plt.close()
 # ---------------------------------------------------------------------------
 # 3. TEXT PREPROCESSING
 # ---------------------------------------------------------------------------
-def clean_text(text):
-    text = text.lower()
-    text = re.sub(r"http\S+|www\S+", " ", text)          # remove URLs
-    text = re.sub(r"\d+", " ", text)                      # remove numbers
-    text = text.translate(str.maketrans("", "", string.punctuation))  # remove punctuation
-    text = re.sub(r"\s+", " ", text).strip()               # normalize whitespace
-    return text
-
 df["clean_message"] = df["message"].apply(clean_text)
 df["label_num"] = df["label"].map({"ham": 0, "spam": 1})
 
