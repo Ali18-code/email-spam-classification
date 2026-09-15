@@ -4,7 +4,7 @@ A complete NLP classification project that trains and compares multiple machine-
 
 ## Why this project matters
 
-This repository demonstrates an end-to-end classical machine-learning workflow rather than only a notebook: data acquisition, text preprocessing, feature engineering, model comparison, evaluation, artifact persistence, and interactive inference.
+This repository demonstrates an end-to-end classical machine-learning workflow rather than only a notebook: data acquisition, reusable preprocessing, feature engineering, model comparison, evaluation, artifact persistence, automated tests, CI, and interactive inference.
 
 ## Highlights
 
@@ -15,6 +15,7 @@ This repository demonstrates an end-to-end classical machine-learning workflow r
 - **Best recorded result:** Linear SVM — **98.39% accuracy**, **0.937 F1**
 - **App:** Streamlit interface for real-time message classification
 - **Reproducible training:** dataset downloader + training script + saved metrics/plots
+- **Quality checks:** pytest unit tests + GitHub Actions CI
 
 ## Results
 
@@ -24,20 +25,25 @@ This repository demonstrates an end-to-end classical machine-learning workflow r
 | Logistic Regression | 96.95% | 100.00% | 77.18% | 0.871 |
 | **Linear SVM** | **98.39%** | **97.81%** | **89.93%** | **0.937** |
 
-> Metrics above are the recorded results produced by the current training pipeline and split configuration. Re-training can produce slightly different results if the pipeline is changed.
+> These are recorded results from the repository's current experiment configuration. If the data, dependencies, preprocessing, or model settings change, retraining may produce different metrics.
 
 ## Project structure
 
 ```text
 email-spam-classification/
-├── app.py                       # Streamlit inference application
-├── spam_classifier.py           # Training + evaluation pipeline
-├── download_data.py             # Dataset downloader
-├── requirements.txt             # Python dependencies
-├── spam_classifier_model.joblib # Saved best classifier
-├── tfidf_vectorizer.joblib      # Saved TF-IDF vectorizer
-├── results_summary.txt          # Generated evaluation summary
-└── screenshots/                 # Generated evaluation visualizations
+├── .github/workflows/ci.yml      # Automated tests and syntax checks
+├── tests/
+│   └── test_text_utils.py        # Preprocessing unit tests
+├── app.py                        # Streamlit inference application
+├── spam_classifier.py            # Training + evaluation pipeline
+├── text_utils.py                 # Shared training/inference preprocessing
+├── download_data.py              # Dataset downloader
+├── requirements.txt              # Runtime dependencies
+├── requirements-dev.txt          # Development/test dependencies
+├── spam_classifier_model.joblib  # Saved best classifier
+├── tfidf_vectorizer.joblib       # Saved TF-IDF vectorizer
+├── results_summary.txt           # Generated evaluation summary
+└── screenshots/                  # Generated evaluation visualizations
 ```
 
 ## How it works
@@ -45,7 +51,7 @@ email-spam-classification/
 ```text
 Raw message
    ↓
-Text cleaning
+Shared text preprocessing
    ↓
 TF-IDF vectorization
    ↓
@@ -54,46 +60,32 @@ Model inference
 Spam / Ham prediction
 ```
 
-The training pipeline evaluates three classifiers and automatically saves the model with the highest F1 score.
+Training and inference import the same `clean_text()` function, reducing the risk of preprocessing drift between experiments and the deployed app.
 
 ## Run locally
-
-### 1. Clone
 
 ```bash
 git clone https://github.com/Ali18-code/email-spam-classification.git
 cd email-spam-classification
-```
-
-### 2. Create a virtual environment
-
-```bash
 python -m venv .venv
 ```
 
-Windows:
+Activate the environment on Windows:
 
 ```bash
 .venv\Scripts\activate
 ```
 
-macOS/Linux:
+Or on macOS/Linux:
 
 ```bash
 source .venv/bin/activate
 ```
 
-### 3. Install dependencies
+Install dependencies and launch the app:
 
 ```bash
 pip install -r requirements.txt
-```
-
-### 4. Launch the app
-
-The repository already contains trained artifacts:
-
-```bash
 streamlit run app.py
 ```
 
@@ -104,7 +96,16 @@ python download_data.py
 python spam_classifier.py
 ```
 
-Training regenerates the model artifacts, evaluation summary, and charts in `screenshots/`.
+Training regenerates the saved model/vectorizer, `results_summary.txt`, and evaluation charts.
+
+## Run tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest -q
+```
+
+The GitHub Actions workflow runs the tests and compiles the Python sources on every push to `main` and on pull requests.
 
 ## Evaluation visualizations
 
@@ -114,35 +115,30 @@ Training regenerates the model artifacts, evaluation summary, and charts in `scr
 
 ## Important model note
 
-The selected Linear SVM exposes a **decision margin**, not a calibrated probability. The Streamlit app intentionally reports the margin instead of converting it into a fake confidence percentage. This keeps the UI technically honest.
+The selected Linear SVM exposes a **decision margin**, not a calibrated probability. The Streamlit app reports that margin directly instead of converting it into a fabricated confidence percentage. If probability estimates are required, the classifier should be calibrated explicitly.
 
 ## Tech stack
 
-- Python
-- pandas / NumPy
-- scikit-learn
-- TF-IDF
-- Streamlit
-- Matplotlib / Seaborn
-- joblib
+Python, pandas, NumPy, scikit-learn, TF-IDF, Streamlit, Matplotlib, Seaborn, joblib, pytest, GitHub Actions.
 
-## What I learned
+## Engineering choices
 
-- Building a repeatable NLP preprocessing pipeline
-- Working with imbalanced binary classification metrics
-- Comparing baseline and margin-based classifiers
-- Persisting ML artifacts for inference
-- Separating model training from the user-facing application
-- Presenting model outputs without overstating confidence
+- Shared preprocessing between training and inference
+- Stratified train/test split for the imbalanced target
+- F1-based best-model selection instead of accuracy alone
+- Fixed random state for repeatable experiments
+- Saved model/vectorizer artifacts for reproducible inference
+- Unit-tested text normalization
+- CI checks for regressions and syntax errors
 
 ## Possible next improvements
 
-- Add cross-validation and hyperparameter tuning
-- Add calibrated SVM probabilities when probability output is required
-- Add automated tests for preprocessing and inference
+- Add cross-validation and hyperparameter search
+- Add calibrated probability estimates when needed
+- Add inference-level tests around saved artifacts
 - Containerize the Streamlit application
-- Add CI checks for formatting and tests
+- Track experiments and model metadata explicitly
 
-## License
+## License / data note
 
-This project is intended for educational and portfolio use. Check the source dataset's terms before redistributing dataset files.
+This repository is intended for educational and portfolio use. Check the source dataset's terms before redistributing dataset files.
